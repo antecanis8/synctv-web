@@ -140,6 +140,70 @@ const sendMsg = (msg: string) => {
   });
 };
 
+// 右键菜单子项
+const sendMenuItems = (event: MouseEvent): ContextMenuItem[] => {
+  // 用户名
+  // const { info } = userStore();
+  // const username = info.value.username;
+  const CopyDanmu: ContextMenuItem = {
+    label: "复制弹幕",
+    onClick: async (): Promise<void> => {
+      const targetElement = event.target as HTMLElement;
+      const message = targetElement.closest("div")?.innerHTML || "";
+      console.log(message);
+      const match = message.match(/:\s*(.*?)(?=\s*<small>|$)/);
+      console.log(match);
+      if (match && match[1]) {
+        await navigator.clipboard.writeText(match[1].trim());
+        ElMessage({
+          message: "已复制",
+          type: "success"
+        });
+        console.log("消息已复制:", match[1].trim());
+      } else {
+        ElMessage({
+          message: "不合法弹幕",
+          type: "warning"
+        });
+        console.error("不合法弹幕");
+      }
+    }
+  };
+  const MenuItems = [CopyDanmu];
+
+  // const RepeatDanmu: ContextMenuItem = {
+  //   label: "弹幕 +1",
+  //   onClick: async (): Promise<void> => {
+  //     const formatMessage = (content: string) => {
+  //       const currentTime = formatTime(new Date());
+  //       const messageContent = `${username}: ${content}`;
+  //       return {
+  //         withTime: `${messageContent} <small>[${currentTime}]</small>`,
+  //         danmu: danmuStore().displayUsername ? messageContent : content
+  //       };
+  //     };
+  //     const chatContent = match[1].trim();
+  //     const { withTime, danmu } = formatMessage(chatContent);
+  //    // 发送弹幕
+  //     sendMsg(withTime);
+  //     sendDanmu({ text: danmu, border: danmuStore().danmuBorder }, player);
+  //   }
+  // };
+
+  const BanUser: ContextMenuItem = {
+    label: "封禁",
+    onClick: (): void => {
+      if (userStore().isLogin) {
+        console.log("isLogin");
+      }
+    }
+  };
+  // 需要权限的用push加入
+  // MenuItems.push(BanUser);
+
+  return MenuItems;
+};
+
 let danmukuSender: HTMLInputElement; // 弹幕发射器 DOM
 const playerOption = computed<options>(() => {
   if (!room.currentMovie.base!.url) {
@@ -158,7 +222,6 @@ const playerOption = computed<options>(() => {
       // TODO 弹幕 重复发送修改
       artplayerPluginDanmuku({
         danmuku: room.currentMovie.base!.danmu || [],
-
         speed: 8,
         async beforeEmit(danmu: any) {
           if (!danmukuSender) {
@@ -179,12 +242,6 @@ const playerOption = computed<options>(() => {
       artplayerPluginMediaControl()
     ]
   };
-  enum danmuPosition {
-    Rolling = 0,
-    Top = 1,
-    Bottom = 2
-  }
-
   if (room.currentMovie.base!.moreSources) {
     const obj = room.currentMovie.base!.moreSources || [];
     option.plugins!.push(
