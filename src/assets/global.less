@@ -241,16 +241,16 @@ a {
   z-index: 800;
 }
 
-@media screen and (min-width: 992px) and (max-width: 1160px), (max-width: 875px) {
-  .artplayer-plugin-danmuku {
-    justify-content: end !important;
+// @media screen and (min-width: 992px) and (max-width: 1160px), (max-width: 875px) {
+//   .artplayer-plugin-danmuku {
+//     justify-content: end !important;
 
-    .apd-config,
-    .apd-emitter {
-      display: none !important;
-    }
-  }
-}
+//     .apd-config,
+//     .apd-emitter {
+//       display: none !important;
+//     }
+//   }
+// }
 
 @media (max-width: 768px) {
   .menu-drawer {
@@ -298,3 +298,28 @@ a {
     margin: auto;
   }
 }
+
+// 当弹幕插件作为播放器的直接子元素时（通常在窄屏幕下），
+// 为播放器自身增加下外边距，以防止弹幕控件与其他元素重叠。
+.art-video-player:has(> .artplayer-plugin-danmuku) {
+  margin-bottom: 48px !important; /* 仍然保留 margin-bottom 来推动下方元素 */
+  background-color: #000000; /* 播放器内容区域的背景色 */
+  position: relative; /* 必须设置，以便伪元素能相对于它定位 */
+}
+
+.art-video-player:has(> .artplayer-plugin-danmuku)::after {
+  content: ""; /* 伪元素必须有 content 属性 */
+  display: block; /* 使其独占一行 */
+  position: absolute; /* 绝对定位 */
+  bottom: -48px; /* 定位到元素下方，正好在 margin 区域 */
+  left: 0;
+  right: 0;
+  height: 48px; /* 与 margin-bottom 的高度相同 */
+  background-color: #000000; /* 伪元素的背景色 */
+  z-index: -1; /* 确保它在播放器内容的下方，如果播放器有重叠内容的话 */
+}
+/* 确保这段 CSS 代码在你的项目中被正确加载 */
+#app > section > main > div:nth-child(1) > div.el-col.el-col-24.el-col-md-6.is-guttered.mb-5.max-sm\:mb-2 {
+  margin-top: 48px; /* 设置上边距为 40 像素 */
+}
+

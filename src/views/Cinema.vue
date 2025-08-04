@@ -34,7 +34,7 @@ import { roomInfoApi } from "@/services/apis/room";
 import { artplayerSubtitle } from "@/plugins/subtitle";
 import { sendDanmu, artplayerStreamDanmu, newDamuControl } from "@/plugins/danmu";
 import { indexStore } from "@/stores";
-import { handleContextMenu, ContextMenuItem } from "@/components/ContextMenu";
+import { handleContextMenu, type ContextMenuItem } from "@/components/ContextMenu";
 
 const { settings } = indexStore();
 
@@ -225,7 +225,7 @@ const playerOption = computed<options>(() => {
         speed: 8,
         async beforeEmit(danmu: any) {
           if (!danmukuSender) {
-            danmukuSender = document.querySelector(".apd-input");
+            danmukuSender = document.querySelector(".apd-input") as HTMLInputElement;
           }
           strLengthLimit(danmu.text, 4096);
           danmukuSender.value = "";
